@@ -61,6 +61,12 @@ set -q glyph_status_jobs; or set -g glyph_status_jobs "⚡"
 set -q color_status_private_bg; or set -g color_status_private_bg black
 set -q color_status_private_str; or set -g color_status_private_str purple
 set -q glyph_status_private; or set -g glyph_status_private "⚙"
+set -q color_aws_bg; or set -g color_aws_bg white
+set -q color_aws_str; or set -g color_aws_str black
+set -q color_aws_stg_bg; or set -g color_aws_stg_bg yellow
+set -q color_aws_stg_str; or set -g color_aws_stg_str black
+set -q color_aws_prd_bg; or set -g color_aws_prd_bg red
+set -q color_aws_prd_str; or set -g color_aws_prd_str white
 
 # ===========================
 # General VCS settings
@@ -236,6 +242,21 @@ function prompt_virtual_env -d "Display Python or Nix virtual environment"
   end
 end
 
+function prompt_aws_profile -d "Display AWS profile"
+  if test "$AWS_PROFILE"
+    set bg_color $color_aws_bg
+    set str_color $color_aws_str
+    if string match -r 'stg|staging' $AWS_PROFILE
+      set bg_color $color_aws_stg_bg
+      set str_color $color_aws_stg_str
+    else if string match -r 'prd|prod' $AWS_PROFILE
+      set bg_color $color_aws_prd_bg
+      set str_color $color_aws_prd_str
+    end
+    prompt_segment $bg_color $str_color " $AWS_PROFILE"
+  end
+end
+
 function prompt_user -d "Display current user if different from $default_user"
   if [ "$theme_display_user" = "yes" ]
     if [ "$USER" != "$default_user" -o -n "$SSH_CLIENT" ]
@@ -374,6 +395,7 @@ function fish_prompt
   set -g RETVAL $status
   prompt_status
   prompt_user
+  prompt_aws_profile
   prompt_dir
   prompt_virtual_env
   if [ (cwd_in_scm_blacklist | wc -c) -eq 0 ]

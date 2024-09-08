@@ -246,10 +246,10 @@ function prompt_aws_profile -d "Display AWS profile"
   if test "$AWS_PROFILE"
     set bg_color $color_aws_bg
     set str_color $color_aws_str
-    if string match -r 'stg|staging' $AWS_PROFILE
+    if string match -q -r 'stg|staging' $AWS_PROFILE
       set bg_color $color_aws_stg_bg
       set str_color $color_aws_stg_str
-    else if string match -r 'prd|prod' $AWS_PROFILE
+    else if string match -q -r 'prd|prod' $AWS_PROFILE
       set bg_color $color_aws_prd_bg
       set str_color $color_aws_prd_str
     end
